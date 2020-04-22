@@ -8,7 +8,7 @@ import logging
 
 username = 'FACEBOOK USER NAME'
 password = 'FACEBOOK PASSWORD'
-reply_message = 'Autoreply: Thanks for getting in touch. I'll get back to you asap'
+reply_message = 'Autoreply: Thanks for getting in touch. I\'ll get back to you asap'
 #will check previous messages - if finds this text will not reply (set to None without quotes to ignore)
 check_text = 'Thanks for getting in touch'
 #check_text = None
