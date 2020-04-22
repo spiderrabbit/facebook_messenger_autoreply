@@ -8,8 +8,8 @@ pip install dateparser pickle requests bs4
 
 Installation
 
-Adjust autoreply message and log in details at top of script
-run as python autoreply.py
+Adjust autoreply message and log in details in fb_login_config.py
+Run as python autoreply.py
 
 Mode of action
 
@@ -23,5 +23,6 @@ Will send message defined in $reply_message to those people who have
 Troubleshooting
 
 Make sure script can write facebook login cookie and replied file in same directory
+Set logger.setLevel(logging.DEBUG) for more output
 If it can't log in Facebook may be blocking as it's from a different location/ different user agent; sign in to Facebook on a PC and allow the login
 Do not reduce the scan wait time- hammering the FB servers will definitely result in a block!
