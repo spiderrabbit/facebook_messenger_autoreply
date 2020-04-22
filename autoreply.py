@@ -63,7 +63,7 @@ def sendreply(url, name):
     replies.append(url)
     with open('replied.pickle', 'wb') as f:
       pickle.dump(replies, f)
-    logger.debug("Sent message to {}".format(name))
+    logger.warning("Sent message to {}".format(name))
   return
 
 def login():
@@ -85,18 +85,19 @@ def login():
   })
   resp = ls.post('https://mbasic.facebook.com{}'.format(form.attrs['action']), headers=headers, data=data)
   if "Search Facebook" in resp.text:
-    logger.debug("Logged in OK")
+    logger.warning("Logged in OK")
     with open('fbcookie.pickle', 'wb') as f:
       pickle.dump(ls.cookies, f)     
   else:
-    logger.debug("Cannot log in - try logging in at https://mbasic.facebook.com/ to see if account blocked")
+    logger.warning("Cannot log in - try logging in at https://mbasic.facebook.com/ to see if account blocked")
   return
 
 
 if __name__ == "__main__":
   # create logger
   logger = logging.getLogger("logging")
-  logger.setLevel(logging.DEBUG)
+  #logger.setLevel(logging.DEBUG)
+  logger.setLevel(logging.WARNING)
   # create console handler and set level to debug
   ch = logging.StreamHandler()
   ch.setLevel(logging.DEBUG)
