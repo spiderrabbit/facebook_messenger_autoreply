@@ -5,13 +5,13 @@ Python 3.x script to autoreply to personal Facebook messenger
 
 Python 3.x
 
-pip install dateparser pickle requests bs4
+`pip install dateparser pickle requests bs4`
 
 ## Installation
 
 Adjust autoreply message and log in details in fb_login_config.py
   
-Run as python autoreply.py
+Run as `python autoreply.py`
 
 ## Mode of action
 

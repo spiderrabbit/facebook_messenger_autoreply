@@ -68,8 +68,8 @@ def login():
 if __name__ == "__main__":
   # create logger
   logger = logging.getLogger("logging")
-  logger.setLevel(logging.DEBUG)
-  #logger.setLevel(logging.WARNING)
+  #logger.setLevel(logging.DEBUG)
+  logger.setLevel(logging.WARNING)
   # create console handler and set level to debug
   ch = logging.StreamHandler()
   ch.setLevel(logging.DEBUG)
