@@ -117,7 +117,7 @@ if __name__ == "__main__":
       response = s.get(murl, headers=headers)
       #get message requests
       if "Phone number or email address" in response.text:#not logged in
-        logger.debug("Not logged in")
+        logger.warning("Not logged in")
         #login again
         login()
         break
