@@ -10,7 +10,7 @@ def sendreply(url, name):
   response = s.get('https://mbasic.facebook.com{}'.format(url), headers=headers)
   #skip if already had auto reply
   if check_text in response.text: 
-    logger.debug("{} already had autoreply".format(name))
+    logger.warning("{} already had autoreply".format(name))
     replies.append(url)
     with open('replied.pickle', 'wb') as f:
       pickle.dump(replies, f)
@@ -68,8 +68,8 @@ def login():
 if __name__ == "__main__":
   # create logger
   logger = logging.getLogger("logging")
-  #logger.setLevel(logging.DEBUG)
-  logger.setLevel(logging.WARNING)
+  logger.setLevel(logging.DEBUG)
+  #logger.setLevel(logging.WARNING)
   # create console handler and set level to debug
   ch = logging.StreamHandler()
   ch.setLevel(logging.DEBUG)
@@ -112,36 +112,37 @@ if __name__ == "__main__":
   }
   while True:
     #get list of messages every 5 minutes
-    for murl in ['https://mbasic.facebook.com/messages/','https://mbasic.facebook.com/messages/?folder=pending']:
-      logger.debug("Retrieving {}".format(murl))
-      response = s.get(murl, headers=headers)
-      #get message requests
-      if "Phone number or email address" in response.text:#not logged in
-        logger.warning("Not logged in")
-        #login again
-        login()
-        break
-      else:
-        logger.debug("Checking messages")
-        soup = BeautifulSoup(response.text, features="html.parser")
-        tables = soup.findAll("table")
-        for t in tables: #loop through each message in messenger home page
-          try:
-            user = t.find("h3").find("a")
-            #user.attrs['href'] 
-            #/messages/read/?tid=cid.c.[friendid]:[myid] or
-            #/messages/read/?tid=cid.c.[myid]:[friendid]
-          except: #not a message table so loop to next message
-            continue
-          
-          #find time last message sent
-          abbr = t.find("abbr")
-          time_diff = (datetime.now() - dateparser.parse(abbr.text)).total_seconds()
-          #only send replies if in last hour, not in ignore list and not already sent message
-          if time_diff < 3600 and user.text not in ignore_list and user.attrs['href'] not in replies:
-            sendreply(user.attrs['href'], user.text)
+    murl = 'https://mbasic.facebook.com/messages/'
+    if random.randint(1,10) == 1: #1 in 10 chance of checking filtered mailbox (help bot detection avoidance)
+      murl += '?folder=pending'
+    logger.debug("Retrieving {}".format(murl))
+    response = s.get(murl, headers=headers)
+    #get message requests
+    if "Phone number or email address" in response.text:#not logged in
+      logger.warning("Not logged in")
+      #login again
+      login()
+      break
+    else:
+      logger.debug("Checking messages")
+      soup = BeautifulSoup(response.text, features="html.parser")
+      tables = soup.findAll("table")
+      for t in tables: #loop through each message in messenger home page
+        try:
+          user = t.find("h3").find("a")
+          #user.attrs['href'] 
+          #/messages/read/?tid=cid.c.[friendid]:[myid] or
+          #/messages/read/?tid=cid.c.[myid]:[friendid]
+        except: #not a message table so loop to next message
+          continue
+        
+        #find time last message sent
+        abbr = t.find("abbr")
+        time_diff = (datetime.now() - dateparser.parse(abbr.text)).total_seconds()
+        #only send replies if in last hour, not in ignore list and not already sent message
+        if time_diff < 3600 and user.text not in ignore_list and user.attrs['href'] not in replies:
+          sendreply(user.attrs['href'], user.text)
             
-      time.sleep(random.randint(5, 20))
       
     sleeptime = random.randint(250, 400)
     logger.debug("Sleeping for {}s".format(sleeptime))

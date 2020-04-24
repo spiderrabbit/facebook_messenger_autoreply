@@ -15,7 +15,7 @@ Run as `python autoreply.py`
 
 ## Mode of action
 
-Will scan all messages in inbox and in "filtered" mailbox approx every 5mins.
+Will scan all messages in inbox (10% chance of scanning "filtered" mailbox) approx every 5mins.
 
 Will send message defined in $reply_message to those people who have 
 1. sent a message in previous hour and
