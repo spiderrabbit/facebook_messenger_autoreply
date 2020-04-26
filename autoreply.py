@@ -142,7 +142,7 @@ if __name__ == "__main__":
           abbr = t.find("abbr")
           time_diff = (datetime.now() - dateparser.parse(abbr.text)).total_seconds()
           #only send replies if in last hour, not in ignore list and not already sent message
-          if time_diff < (12*3600):
+          if time_diff < (1*3600):
             logger.debug("Message found that needs reply {}".format(user.attrs['href']))
             if user.text not in ignore_list:
               if user.attrs['href'] not in replies:
