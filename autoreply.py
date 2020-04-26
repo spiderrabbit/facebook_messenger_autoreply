@@ -58,6 +58,8 @@ def login():
   resp = ls.post('https://mbasic.facebook.com{}'.format(form.attrs['action']), headers=headers, data=data)
   if "Search Facebook" in resp.text:
     logger.warning("Logged in OK")
+    s.cookies.clear() #clear all existing cookies
+    s.cookies.update(ls.cookies) #update main script client with new cookie
     with open('fbcookie.pickle', 'wb') as f:
       pickle.dump(ls.cookies, f)     
   else:
@@ -122,26 +124,38 @@ if __name__ == "__main__":
       logger.warning("Not logged in")
       #login again
       login()
-      break
     else:
-      logger.debug("Checking messages")
-      soup = BeautifulSoup(response.text, features="html.parser")
-      tables = soup.findAll("table")
-      for t in tables: #loop through each message in messenger home page
-        try:
-          user = t.find("h3").find("a")
-          #user.attrs['href'] 
-          #/messages/read/?tid=cid.c.[friendid]:[myid] or
-          #/messages/read/?tid=cid.c.[myid]:[friendid]
-        except: #not a message table so loop to next message
-          continue
-        
-        #find time last message sent
-        abbr = t.find("abbr")
-        time_diff = (datetime.now() - dateparser.parse(abbr.text)).total_seconds()
-        #only send replies if in last hour, not in ignore list and not already sent message
-        if time_diff < 3600 and user.text not in ignore_list and user.attrs['href'] not in replies:
-          sendreply(user.attrs['href'], user.text)
+      if 'Search for messages' in response.text:
+        logger.debug("Checking messages")
+        soup = BeautifulSoup(response.text, features="html.parser")
+        tables = soup.findAll("table")
+        for t in tables: #loop through each message in messenger home page
+          try:
+            user = t.find("h3").find("a")
+            #user.attrs['href'] 
+            #/messages/read/?tid=cid.c.[friendid]:[myid] or
+            #/messages/read/?tid=cid.c.[myid]:[friendid]
+          except: #not a message table so loop to next message
+            continue
+          
+          #find time last message sent
+          abbr = t.find("abbr")
+          time_diff = (datetime.now() - dateparser.parse(abbr.text)).total_seconds()
+          #only send replies if in last hour, not in ignore list and not already sent message
+          if time_diff < (12*3600):
+            logger.debug("Message found that needs reply {}".format(user.attrs['href']))
+            if user.text not in ignore_list:
+              if user.attrs['href'] not in replies:
+                logger.debug("Sending reply")
+                sendreply(user.attrs['href'], user.text)
+              else:
+                logger.debug("Already replied to {}".format(user.attrs['href']))
+            else:
+              logger.debug("Ignoring user {} as in ignore list".format(user.text))
+      else:
+        logger.warning("Cannot retrieve messages page- relogging in")
+        #login again
+        login()
             
       
     sleeptime = random.randint(250, 400)
