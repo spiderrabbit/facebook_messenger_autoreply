@@ -27,8 +27,8 @@ Will send message defined in $reply_message to those people who have
 
 Make sure script can write facebook login cookie and replied file in same directory
 
-Set logger.setLevel(logging.DEBUG) for more output
+Use --debug switch for more info
 
-If it can't log in Facebook may be blocking as it's from a different location/ different user agent; sign in to Facebook on a PC and allow the login
+If script can't log in Facebook may be blocking (because from a different location/ different user agent etc.); sign in to Facebook on a PC and allow the login
 
 Do not reduce the scan wait time- hammering the FB servers will definitely result in a block!
