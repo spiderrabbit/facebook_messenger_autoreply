@@ -4,6 +4,7 @@ import dateparser
 from datetime import datetime
 import logging
 from fb_login_config import *
+import argparse
 
 def sendreply(url, name):
   #go to message page
@@ -68,10 +69,18 @@ def login():
 
 
 if __name__ == "__main__":
+  #parse swtiches
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--debug", action="store_true")
+  args = parser.parse_args()
+    
+  
   # create logger
   logger = logging.getLogger("logging")
-  logger.setLevel(logging.DEBUG)
-  #logger.setLevel(logging.WARNING)
+  if args.debug:
+    logger.setLevel(logging.DEBUG)
+  else:
+    logger.setLevel(logging.WARNING)
   # create console handler and set level to debug
   ch = logging.StreamHandler()
   ch.setLevel(logging.DEBUG)
